@@ -7,23 +7,54 @@ const saltRounds = 12;
 /**
  * Get all users
  */
-router.get('/all', function (req, res, next) {
+router.get('/all', function (req, res) {
   connection.connect((err) => {
     if (err) {
       console.log(err);
       return res.status(500).json({ error: 'error with connection' });
     }
 
-    let query = 'SELECT * FROM users';
+    let selectQuery = 'SELECT * FROM users';
 
-    connection.query(query, (err, result) => {
+    connection.query(selectQuery, (err, users) => {
       if (err) {
         console.log(err);
         return res.status(500).json({ error: 'error with connection' });
       }
 
-      console.log('result', result);
-      res.json(result);
+      const sentResults = users.map((user) => {
+        const userNoPass = { ...user };
+        delete userNoPass.password;
+        return userNoPass;
+      });
+
+      console.log('users', sentResults);
+      res.json(sentResults);
+    });
+  });
+});
+
+/**
+ * Get specific user
+ */
+router.get('/:userId', function (req, res) {
+  console.log(req.body);
+  connection.connect((err) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'error with connection' });
+    }
+
+    let selectQuery = `SELECT id, email, name FROM users WHERE id="${req.params.userId}"`;
+
+    connection.query(selectQuery, (err, userData) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'error with connection' });
+      }
+
+      console.log('user', userData[0]);
+      res.json(userData[0]);
     });
   });
 });
@@ -65,7 +96,7 @@ router.post('/login', (req, res) => {
 
         if (result) {
           console.log(result);
-          res.json({ message: 'login works' });
+          res.json(result);
         } else {
           res.status(401).json({ error: 'password is incorrect' });
         }
@@ -113,7 +144,9 @@ router.post('/add', (req, res) => {
           }
 
           console.log(result);
-          res.status(201).json({ message: 'User added' });
+          res
+            .status(201)
+            .json({ message: 'User added', name: name, email: email });
         });
       });
     });
