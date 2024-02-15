@@ -32,13 +32,15 @@ router.get('/all', function (req, res, next) {
  * Login user
  */
 router.post('/login', (req, res) => {
+  const { email, password } = req.body;
+
   connection.connect((err) => {
     if (err) {
       console.log(err);
       return res.status(500).json({ error: 'error with connection' });
     }
 
-    const { email, password } = req.body;
+    let query = `SELECT * FROM users WHERE email="${email}"`;
 
     connection.query(query, (err, result) => {
       if (err) {
@@ -46,12 +48,26 @@ router.post('/login', (req, res) => {
         return res.status(500).json({ error: 'error with connection' });
       }
 
-      console.log(result);
-      res.json(result);
+      if (result.length === 0) {
+        console.log('user does not exist');
+        return res.status(402).json({ error: 'user does not exist' });
+      }
+
+      const hashPassword = result[0].password;
+
+      bcrypt.compare(password, hashPassword).then(function (result) {
+        console.log(result);
+        // result == true
+
+        if (result) {
+          console.log(result);
+          res.json({ message: 'login works' });
+        } else {
+          res.status(401).json({ error: 'password is incorrect' });
+        }
+      });
     });
   });
-
-  res.send('login works');
 });
 
 /**
