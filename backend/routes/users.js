@@ -2,15 +2,28 @@ var express = require('express');
 var router = express.Router();
 const connection = require('../lib/conn');
 
-/* GET users listing. */
+/**
+ * Get all users
+ */
 router.get('/all', function (req, res, next) {
   connection.connect((err) => {
     if (err) {
       console.log(err);
       return res.status(500).json({ error: 'error with connection' });
     }
+
+    let query = 'SELECT * FROM users';
+
+    connection.query(query, (err, result) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'error with connection' });
+      }
+
+      console.log('result', result);
+      res.json(result);
+    });
   });
-  res.json({ login: 'all works' });
 });
 
 /**
