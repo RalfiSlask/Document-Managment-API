@@ -50,6 +50,54 @@ router.get('/:userId', function (req, res, next) {
   });
 });
 
+// Unsure if it is better to use one single patch request or three different ones?
+
+/**
+ * Update content
+ * Uses select query to check if the document exists in database
+ * Updates document with values sent in body
+ */
+router.patch('/update', function (req, res, next) {
+  connection.connect((err) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'error with connection' });
+    }
+
+    const { userId, documentId, content, title, description } = req.body;
+
+    let selectQuery = `SELECT * FROM documents WHERE user_id = ? AND document_id = ?`;
+
+    connection.query(selectQuery, [userId, documentId], (err, data) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ error: 'error with connection' });
+      }
+
+      if (data.length === 0) {
+        console.log(data);
+        return res.status(404).json({ error: 'document does not exist' });
+      }
+
+      let updateQuery = `UPDATE documents SET content = ?, title = ?, description = ?  WHERE user_id = ? AND document_id = ?`;
+
+      connection.query(
+        updateQuery,
+        [content, title, description, userId, documentId],
+        (err, result) => {
+          if (err) {
+            console.log(err);
+            return res.status(500).json({ error: 'error with connection' });
+          }
+
+          console.log('result', result);
+          res.json(result);
+        }
+      );
+    });
+  });
+});
+
 /**
  * Soft delete for document
  * If delete request does not provide userId and documentId return
