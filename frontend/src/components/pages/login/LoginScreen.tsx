@@ -1,4 +1,4 @@
-function App() {
+function LoginScreen() {
   return (
     <>
       <h1 className="text-orange-500">Test</h1>
@@ -6,4 +6,4 @@ function App() {
   );
 }
 
-export default App;
+export default LoginScreen;
