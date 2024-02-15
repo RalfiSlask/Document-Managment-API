@@ -104,7 +104,7 @@ router.patch('/update', function (req, res, next) {
  * Checking if document exist in database
  * Update delete status for document
  */
-router.delete('/remove', function (req, res, next) {
+router.delete('/remove', function (req, res) {
   connection.connect((err) => {
     if (err) {
       console.log(err);
@@ -143,6 +143,41 @@ router.delete('/remove', function (req, res, next) {
         res.json(result);
       });
     });
+  });
+});
+
+/**
+ * Create new document
+ */
+router.post('/add/:userId', function (req, res) {
+  const { title, description, content } = req.body;
+
+  connection.connect((err) => {
+    if (err) {
+      console.log(err);
+      return res.status(500).json({ error: 'error with connection' });
+    }
+
+    if (!title || !description || !content) {
+      return res
+        .status(404)
+        .json({ error: 'you have to provide contents for the document' });
+    }
+
+    let insertQuery = `INSERT INTO documents (title, description, content, userId) VALUES (?, ?, ?, ?)`;
+
+    connection.query(
+      insertQuery,
+      [title, description, content, req.params.userId],
+      (err, data) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ error: 'error inserting' });
+        }
+
+        res.status(201).json({ message: 'created new document', data: data });
+      }
+    );
   });
 });
 
