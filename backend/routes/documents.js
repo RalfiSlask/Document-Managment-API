@@ -118,9 +118,9 @@ router.delete('/remove', function (req, res) {
       return res.status(401).json({ error: 'you have to provide ids' });
     }
 
-    let selectQuery = `SELECT * FROM documents WHERE user_id="${userId}" AND document_id="${documentId}"`;
+    let selectQuery = `SELECT * FROM documents WHERE user_id = ? AND document_id = ?`;
 
-    connection.query(selectQuery, (err, data) => {
+    connection.query(selectQuery, [userId, documentId], (err, data) => {
       if (err) {
         console.log(err);
         return res.status(500).json({ error: 'error with connection' });
@@ -131,9 +131,9 @@ router.delete('/remove', function (req, res) {
         return res.status(404).json({ error: 'document does not exist' });
       }
 
-      let deleteQuery = `UPDATE documents SET deleted=1 WHERE user_id="${userId}" AND document_id="${documentId}" AND deleted=0`;
+      let deleteQuery = `UPDATE documents SET deleted=1 WHERE user_id = ? AND document_id = ? AND deleted = 0`;
 
-      connection.query(deleteQuery, (err, result) => {
+      connection.query(deleteQuery, [userId, documentId], (err, result) => {
         if (err) {
           console.log(err);
           return res.status(500).json({ error: 'error with connection' });
@@ -164,7 +164,7 @@ router.post('/add/:userId', function (req, res) {
         .json({ error: 'you have to provide contents for the document' });
     }
 
-    let insertQuery = `INSERT INTO documents (title, description, content, userId) VALUES (?, ?, ?, ?)`;
+    let insertQuery = `INSERT INTO documents (title, description, content, user_id) VALUES (?, ?, ?, ?)`;
 
     connection.query(
       insertQuery,
