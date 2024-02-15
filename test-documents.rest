@@ -1,0 +1,51 @@
+ // API ENDPOINTS DOCUMENTS //
+
+// GET ALL DOCUMENTS
+GET http://localhost:3000/api/documents/all
+
+###
+
+// GET DOCUMENTS FOR SPECIFIC USER
+GET http://localhost:3000/api/documents/2
+
+###
+
+// UPDATE DOCUMENT
+PATCH http://localhost:3000/api/documents/update
+Content-Type: application/json
+
+{
+ "userId": 2,
+ "documentId": 6,
+ "content": "test-content",
+ "title": "test-title", 
+ "description": "test-description"
+}
+
+###
+
+// SOFT DELETE DOCUMENT
+DELETE http://localhost:3000/api/documents/remove
+Content-Type: application/json
+
+{
+ "userId": 2,
+ "documentId": 6
+}
+
+###
+
+// CREATE NEW DOCUMENT
+POST http://localhost:3000/api/documents/add/2
+Content-Type: application/json
+
+{
+
+ "title": "test",
+ "description": "test",
+ "content": "test"
+}
+
+###
+
+
