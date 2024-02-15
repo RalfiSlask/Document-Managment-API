@@ -30,6 +30,8 @@ router.get('/all', function (req, res, next) {
 
 /**
  * Login user
+ * Using select query to check if user exists
+ * Decrypts password and checks if it is correct, returns boolean
  */
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
@@ -40,9 +42,9 @@ router.post('/login', (req, res) => {
       return res.status(500).json({ error: 'error with connection' });
     }
 
-    let query = `SELECT * FROM users WHERE email="${email}"`;
+    let query = `SELECT * FROM users WHERE email = ?`;
 
-    connection.query(query, (err, result) => {
+    connection.query(query, [email], (err, result) => {
       if (err) {
         console.log(err);
         return res.status(500).json({ error: 'error with connection' });
@@ -55,9 +57,11 @@ router.post('/login', (req, res) => {
 
       const hashPassword = result[0].password;
 
-      bcrypt.compare(password, hashPassword).then(function (result) {
-        console.log(result);
-        // result == true
+      bcrypt.compare(password, hashPassword, (err, result) => {
+        if (err) {
+          console.log(err);
+          return res.status(500).json({ error: 'error with connection' });
+        }
 
         if (result) {
           console.log(result);
@@ -71,7 +75,9 @@ router.post('/login', (req, res) => {
 });
 
 /**
- * Create user
+ * Checks if user already exists with select query
+ * Encrypts password with hashing
+ * Inserts into database
  */
 router.post('/add', (req, res) => {
   const { name, email, password } = req.body;
@@ -81,19 +87,17 @@ router.post('/add', (req, res) => {
       return res.status(500).json({ error: 'error with connection' });
     }
 
-    let query = 'SELECT * FROM users';
+    let selectQuery = 'SELECT * FROM users WHERE email = ?';
 
-    connection.query(query, (err, result) => {
+    connection.query(selectQuery, [email], (err, result) => {
       if (err) {
         console.log(err);
         return res.status(500).json({ error: 'error with connection' });
       }
 
-      const users = result;
-      const doesUserExist = users.find((user) => user.email === email);
-      if (doesUserExist) {
-        console.log('user already exist');
-        return res.status(404).json({ error: 'user already exist' });
+      if (result.length > 0) {
+        console.log('user already exists');
+        return res.status(409).json({ error: 'user already exist' });
       }
 
       bcrypt.hash(password, saltRounds, function (err, hash) {
@@ -101,15 +105,15 @@ router.post('/add', (req, res) => {
           console.log(err);
           return res.status(500).json({ error: 'error crypting password' });
         }
-        let query = `INSERT INTO users (name, email, password) VALUES ("${name}", "${email}", "${hash}")`;
-        connection.query(query, (err, result) => {
+        let query = `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`;
+        connection.query(query, [name, email, hash], (err, result) => {
           if (err) {
             console.log(err);
             return res.status(500).json({ error: 'error with connection' });
           }
 
           console.log(result);
-          res.json(result);
+          res.status(201).json({ message: 'User added' });
         });
       });
     });
