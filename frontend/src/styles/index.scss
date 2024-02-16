@@ -5,5 +5,18 @@
 @import './vendor/reset';
 @import './variables/variables';
 
-:root {
+body,
+:root,
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.button-primary {
+  @apply bg-buttonBG rounded-md px-8 py-2 text-lg text-white;
+}
+
+.input {
+  @apply rounded-md pl-2 py-2 bg-inputBG focus:bg-amber-100 placeholder:text-gray-400;
 }
