@@ -22,6 +22,7 @@ interface IDocumentsTypes {
     setFormSubmitted: React.Dispatch<React.SetStateAction<boolean>>
   ) => void;
   handleNewDocumentSubmit: (e: FormEvent<HTMLFormElement>, userId: string) => Promise<void>;
+  deleteDocument: (userId: number, documentId: number) => Promise<void>;
 }
 
 interface IDocumentType {
@@ -41,6 +42,26 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
 
   const handleClickOnNewDocument = () => {
     setSectionsOpen(prev => ({ ...prev, start: false, create: true }));
+  };
+
+  const deleteDocument = async (userId: number, documentId: number) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/documents/remove`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: userId, documentId: documentId }),
+      });
+
+      const jsonData = await response.json();
+      if (jsonData) {
+        console.log(jsonData);
+        await getUserSpecificDocuments(userId.toString());
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const getUserSpecificDocuments = async (userId: string) => {
@@ -126,6 +147,7 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     handleResetOfDocumentForm: handleResetOfDocumentForm,
     handleDocumentFormInputOnChange: handleDocumentFormInputOnChange,
     handleNewDocumentSubmit: handleNewDocumentSubmit,
+    deleteDocument: deleteDocument,
   };
 
   return <DocumentsContext.Provider value={contextValue}>{children}</DocumentsContext.Provider>;
