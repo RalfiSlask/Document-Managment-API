@@ -49,15 +49,24 @@ interface ILoginChildrenType {
 const storedUser = localStorage.getItem('user');
 
 export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
+  // form values
   const [loginInputValues, setLoginInputValues] = useState({ email: '', password: '' });
   const [createAccountInputValues, setCreateAccountInputValues] = useState({ name: '', email: '', password: '' });
+
+  // error messages
   const [loginErrorMessage, setLoginErrorMessage] = useState('');
   const [createAccountErrorMessage, setCreateAccountErrorMessage] = useState('');
+
+  // user information
   const [userName, setUserName] = useState('');
+  const [userId, setUserId] = useState(storedUser ? JSON.parse(storedUser).id : '');
+
+  // form validity
   const [isFormValid, setIsFormValid] = useState({ email: false, name: false });
+
+  // booleans
   const [createAccountOpen, setCreateAccountOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [userId, setUserId] = useState(storedUser ? JSON.parse(storedUser).id : '');
 
   /**
    * Posts form inputs for the user login to server
@@ -92,16 +101,13 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
     }
   };
 
-  const handleResetOfForm = (type: string) => {
-    if (type === 'login') {
-      setLoginInputValues({ email: '', password: '' });
-      setLoginErrorMessage('');
-    } else if (type === 'create') {
-      setCreateAccountInputValues({ name: '', email: '', password: '' });
-      setCreateAccountErrorMessage('');
-    }
-  };
-
+  /**
+   * Post form values when creating an account
+   * Resets input values to empty
+   * Tells user if the user already exist
+   * Tells user that they succesfully created an account
+   * @returns void
+   */
   const postCreateAccountFormValues = async () => {
     try {
       const response = await fetch('http://localhost:3000/api/users/add', {
@@ -127,6 +133,26 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
     }
   };
 
+  /**
+   * Resets a form
+   * @param type represents what type of input should be reset
+   */
+  const handleResetOfForm = (type: string) => {
+    if (type === 'login') {
+      setLoginInputValues({ email: '', password: '' });
+      setLoginErrorMessage('');
+    } else if (type === 'create') {
+      setCreateAccountInputValues({ name: '', email: '', password: '' });
+      setCreateAccountErrorMessage('');
+    }
+  };
+
+  /**
+   * Submits create account form
+   * Checks if inputs are empty, in that case show error message
+   * If everything is valid post input values to server
+   * @param e FormEvent for a HTML Form Element
+   */
   const handleCreateAccountSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { email, password } = createAccountInputValues;
@@ -135,13 +161,18 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
     } else if (!isFormValid.email || !isFormValid.name) {
       setFormSubmitted(true);
     } else {
-      console.log('hej goes through');
       setFormSubmitted(true);
       setCreateAccountErrorMessage('');
       await postCreateAccountFormValues();
     }
   };
 
+  /**
+   * Submits Login Form
+   * Checks if inputs are empty, in that case show error message
+   * @param e FormEvent for a HTMLForm Element
+   * @param navigate function with path to a router using the navigate function
+   */
   const handleLoginSubmit = async (e: FormEvent<HTMLFormElement>, navigate: (path: string) => void) => {
     e.preventDefault();
     const { email, password } = loginInputValues;
@@ -168,6 +199,14 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
     setLoginErrorMessage('');
   };
 
+  /**
+   * Function for when user changes input based on type in the create account form
+   * @param inputKey object key for the input values
+   * @param e FormEvent for HTMLInput Element
+   * @param setError What error message will be delivered based on inputKey
+   * @param setIsFormValid Validity of the form
+   * @param setFormSubmitted boolean value if the form is submitted
+   */
   const handleCreateAccountInputOnChange = (
     inputKey: keyof ICreateAccountFormInputValues,
     e: FormEvent<HTMLInputElement>,
