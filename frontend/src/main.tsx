@@ -9,15 +9,15 @@ import { DocumentsProvider } from './context/DocumentsContext.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <HashRouter>
-      <Routes>
-        <LoginProvider>
-          <DocumentsProvider>
+    <LoginProvider>
+      <DocumentsProvider>
+        <HashRouter>
+          <Routes>
             <Route path="/" element={<LoginScreen />} />
             <Route path="/documents" element={<DocumentsScreen />} />
-          </DocumentsProvider>
-        </LoginProvider>
-      </Routes>
-    </HashRouter>
+          </Routes>
+        </HashRouter>
+      </DocumentsProvider>
+    </LoginProvider>
   </React.StrictMode>
 );
