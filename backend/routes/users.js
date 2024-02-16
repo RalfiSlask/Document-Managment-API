@@ -87,16 +87,17 @@ router.post('/login', (req, res) => {
       }
 
       const hashPassword = result[0].password;
+      const { name, id } = result[0];
 
-      bcrypt.compare(password, hashPassword, (err, result) => {
+      bcrypt.compare(password, hashPassword, (err, data) => {
         if (err) {
           console.log(err);
           return res.status(500).json({ error: 'error with connection' });
         }
 
-        if (result) {
-          console.log(result);
-          res.json(result);
+        if (data) {
+          console.log(data);
+          res.json({ name: name, id: id });
         } else {
           res.status(401).json({ error: 'password is incorrect' });
         }
