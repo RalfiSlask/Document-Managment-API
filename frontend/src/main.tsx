@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import LoginScreen from './components/pages/login/LoginScreen.tsx';
-import DocumentsScreen from './components/pages/documents/DocumentsScreen.tsx';
+import DocumentsScreen from './components/pages/documents/start/DocumentsScreen.tsx';
 import './styles/index.scss';
 import { HashRouter, Routes, Route } from 'react-router-dom';
 import { LoginProvider } from './context/LoginContext.tsx';
