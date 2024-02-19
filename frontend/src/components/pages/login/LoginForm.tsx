@@ -3,23 +3,30 @@ import ResetButton from '../../shared/ResetButton';
 import SubmitButton from '../../shared/SubmitButton';
 import LoginInput from './LoginInput';
 import { LoginContext } from '../../../context/LoginContext';
+import { useNavigate } from 'react-router-dom';
 
 function LoginForm() {
   const loginContext = useContext(LoginContext);
+  const navigate = useNavigate();
 
   if (!loginContext) {
     return;
   }
 
-  const { handleLoginSubmit, loginErrorMessage } = loginContext;
+  const { handleLoginSubmit } = loginContext;
 
   return (
     <>
-      <h1 className="text-orange-500">Test</h1>
-      <form onSubmit={handleLoginSubmit} className="flex flex-col gap-4 w-[300px] items-center">
-        <p className="text-red-500 text-lg h-[30px]">{loginErrorMessage}</p>
-        <LoginInput type="text" text="email" inputKey="email" />
-        <LoginInput type="password" text="password" inputKey="password" />
+      <form
+        onSubmit={e => {
+          handleLoginSubmit(e, navigate);
+        }}
+        className="flex flex-col gap-10 w-[350px] items-center"
+      >
+        <div className="w-full flex flex-col gap-4">
+          <LoginInput type="text" text="email" inputKey="email" />
+          <LoginInput type="password" text="password" inputKey="password" />
+        </div>
         <div className="flex justify-center gap-4">
           <SubmitButton title={'Submit'} />
           <ResetButton type={'login'} />
