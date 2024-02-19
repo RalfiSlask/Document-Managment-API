@@ -4,10 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        primaryBG: '#FFFFFF',
-        secondaryBG: '#F1F3F6',
-        buttonBG: '#FD7401',
-        inputBG: '#F1F3F6',
+        primaryBG: '#14131B',
+        secondaryBG: '#24232C',
+        buttonBG: '#A4FFAF',
+        buttonText: '#24232C',
+        inputBG: '#18171F',
+        placeholder: '#817D92',
+        textColor: '#E6E5EA',
       },
     },
   },
