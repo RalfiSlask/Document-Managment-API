@@ -11,13 +11,13 @@ const LoginNotRegistered = () => {
   const { setCreateAccountFormStateOnClick } = loginContext;
 
   return (
-    <div className="flex items-center gap-4">
-      <p className="text-2xl text-grayText">Not Registered Yet?</p>
+    <div className="flex items-baseline gap-4">
+      <p className="text-lg text-placeholder">Not Registered Yet?</p>
       <p
         onClick={() => {
           setCreateAccountFormStateOnClick(true);
         }}
-        className="text-2xl cursor-pointer"
+        className="text-xl cursor-pointer hover:text-buttonBG"
       >
         Create an account
       </p>
