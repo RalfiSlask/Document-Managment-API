@@ -15,14 +15,15 @@ const LoginScreen = () => {
   const { createAccountOpen } = loginContext;
 
   return (
-    <main>
+    <main className="w-full flex flex-col items-center gap-12 mt-[100px]">
+      <h1 className="text-buttonBG text-2xl">{createAccountOpen ? 'Create Account' : 'Login'}</h1>
       {createAccountOpen ? (
-        <section>
+        <section className="pt-10 pb-12 px-6 bg-secondaryBG flex flex-col rounded-lg w-[500px] items-center gap-6">
           <GoBackButton />
           <CreateAccountForm />
         </section>
       ) : (
-        <section>
+        <section className="pt-20 pb-12 px-6 bg-secondaryBG flex flex-col rounded-lg w-[500px] items-center gap-6">
           <LoginForm />
           <LoginNotRegistered />
         </section>
