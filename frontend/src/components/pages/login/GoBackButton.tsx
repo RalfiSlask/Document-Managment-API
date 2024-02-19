@@ -15,7 +15,7 @@ const GoBackButton = () => {
       onClick={() => {
         setCreateAccountFormStateOnClick(false);
       }}
-      className="button-primary"
+      className="button-primary absolute left-6 top-6"
     >
       Go Back
     </button>
