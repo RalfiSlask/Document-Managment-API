@@ -11,12 +11,27 @@ body,
   width: 100%;
   display: flex;
   justify-content: center;
+  background-color: $primaryBG;
+  color: $textColor;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .button-primary {
-  @apply bg-buttonBG rounded-md px-8 py-2 text-lg text-white;
+  @apply bg-buttonBG rounded-md px-8 py-2 border-[2px] border-solid border-buttonBG text-lg text-buttonText hover:bg-secondaryBG hover:text-buttonBG;
 }
 
 .input {
-  @apply rounded-md pl-2 py-2 bg-inputBG focus:bg-amber-100 placeholder:text-gray-400;
+  @apply rounded-md pl-3 py-2 bg-inputBG text-textColor placeholder:text-placeholder focus:outline-buttonBG;
+}
+
+.document-container button {
+  opacity: 0;
+}
+
+.document-container:hover {
+  button {
+    transition: opacity;
+    transition-duration: 1000ms;
+    opacity: 1;
+  }
 }
