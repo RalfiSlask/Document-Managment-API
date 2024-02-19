@@ -36,7 +36,7 @@ router.get('/:userId', function (req, res, next) {
       return res.status(500).json({ error: 'error with connection' });
     }
 
-    let query = `SELECT * FROM documents WHERE user_id="${req.params.userId}"`;
+    let query = `SELECT * FROM documents WHERE user_id="${req.params.userId}" AND deleted="0"`;
 
     connection.query(query, (err, result) => {
       if (err) {
@@ -58,32 +58,28 @@ router.get('/:userId', function (req, res, next) {
  * Updates document with values sent in body
  */
 router.patch('/update', function (req, res, next) {
+  console.log(req.body);
   connection.connect((err) => {
     if (err) {
       console.log(err);
       return res.status(500).json({ error: 'error with connection' });
     }
 
-    const { userId, documentId, content, title, description } = req.body;
+    const { user_id, document_id, content, title, description } = req.body;
 
     let selectQuery = `SELECT * FROM documents WHERE user_id = ? AND document_id = ?`;
 
-    connection.query(selectQuery, [userId, documentId], (err, data) => {
+    connection.query(selectQuery, [user_id, document_id], (err, data) => {
       if (err) {
         console.log(err);
         return res.status(500).json({ error: 'error with connection' });
-      }
-
-      if (data.length === 0) {
-        console.log(data);
-        return res.status(404).json({ error: 'document does not exist' });
       }
 
       let updateQuery = `UPDATE documents SET content = ?, title = ?, description = ?  WHERE user_id = ? AND document_id = ?`;
 
       connection.query(
         updateQuery,
-        [content, title, description, userId, documentId],
+        [content, title, description, user_id, document_id],
         (err, result) => {
           if (err) {
             console.log(err);
@@ -111,6 +107,7 @@ router.delete('/remove', function (req, res) {
       return res.status(500).json({ error: 'error with connection' });
     }
 
+    console.log(req.body);
     const { userId, documentId } = req.body;
 
     if (!userId || !documentId) {
@@ -152,13 +149,16 @@ router.delete('/remove', function (req, res) {
 router.post('/add/:userId', function (req, res) {
   const { title, description, content } = req.body;
 
+  console.log(req.body);
+
   connection.connect((err) => {
     if (err) {
       console.log(err);
       return res.status(500).json({ error: 'error with connection' });
     }
 
-    if (!title || !description || !content) {
+    if (!title || !description) {
+      console.log('provide');
       return res
         .status(404)
         .json({ error: 'you have to provide contents for the document' });
