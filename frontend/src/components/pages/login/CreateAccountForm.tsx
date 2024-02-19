@@ -29,25 +29,29 @@ const CreateAccountForm = () => {
       id="formInput"
       className="flex flex-col gap-4 w-[400px] items-center"
     >
-      <p className="text-red-500 text-lg">{createAccountErrorMessage}</p>
-      {inputs.map(input => {
-        const { id, type, text, inputKey } = input;
-        return (
-          <CreateAccountInput
-            key={id}
-            type={type}
-            text={text}
-            inputKey={inputKey}
-            formSubmitted={formSubmitted}
-            setIsFormValid={setIsFormValid}
-            setFormSubmitted={setFormSubmitted}
-          />
-        );
-      })}
+      <p className="text-red-500 text-lg h-[30px]">{createAccountErrorMessage}</p>
+      <div className="flex flex-col items-center gap-10">
+        <div className="w-[350px] flex flex-col gap-4 items-center">
+          {inputs.map(input => {
+            const { id, type, text, inputKey } = input;
+            return (
+              <CreateAccountInput
+                key={id}
+                type={type}
+                text={text}
+                inputKey={inputKey}
+                formSubmitted={formSubmitted}
+                setIsFormValid={setIsFormValid}
+                setFormSubmitted={setFormSubmitted}
+              />
+            );
+          })}
+        </div>
 
-      <div className="flex justify-center gap-4">
-        <SubmitButton title={'Create Account'} />
-        <ResetButton type={'create'} />
+        <div className="flex justify-center gap-4">
+          <SubmitButton title={'Create Account'} />
+          <ResetButton type={'create'} />
+        </div>
       </div>
     </form>
   );
