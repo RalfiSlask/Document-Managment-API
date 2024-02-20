@@ -134,4 +134,34 @@ q:after {
 table {
   border-collapse: collapse;
   border-spacing: 0;
+}
+
+body,
+:root,
+#root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: #14131b;
+  color: #e6e5ea;
+  font-family: "JetBrains Mono", monospace;
+  min-height: 100vh;
+}
+
+.button-primary {
+  @apply bg-buttonBG rounded-md px-8 py-2 border-[2px] border-solid border-buttonBG text-lg text-buttonText hover:bg-secondaryBG hover:text-buttonBG;
+}
+
+.input {
+  @apply rounded-md pl-3 py-2 bg-inputBG text-textColor placeholder:text-placeholder focus:outline-buttonBG;
+}
+
+.document-container button {
+  opacity: 0;
+}
+
+.document-container:hover button {
+  transition: opacity;
+  transition-duration: 1000ms;
+  opacity: 1;
 }/*# sourceMappingURL=index.css.map */

@@ -14,6 +14,7 @@ body,
   background-color: $primaryBG;
   color: $textColor;
   font-family: 'JetBrains Mono', monospace;
+  min-height: 100vh;
 }
 
 .button-primary {
