@@ -40,6 +40,7 @@ interface ILoginTypes {
     setFormSubmitted: React.Dispatch<React.SetStateAction<boolean>>
   ) => void;
   handleCreateAccountSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>;
+  loggingOut: () => void;
 }
 
 interface ILoginChildrenType {
@@ -67,6 +68,12 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
   // booleans
   const [createAccountOpen, setCreateAccountOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
+
+  const loggingOut = () => {
+    localStorage.removeItem('user');
+    setUserId('');
+    setUserName('');
+  };
 
   /**
    * Posts form inputs for the user login to server
@@ -268,6 +275,7 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
     setCreateAccountFormStateOnClick: setCreateAccountFormStateOnClick,
     handleCreateAccountInputOnChange: handleCreateAccountInputOnChange,
     handleCreateAccountSubmit: handleCreateAccountSubmit,
+    loggingOut: loggingOut,
   };
 
   return <LoginContext.Provider value={contextValue}>{children}</LoginContext.Provider>;
