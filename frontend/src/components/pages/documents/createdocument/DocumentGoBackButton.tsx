@@ -11,7 +11,7 @@ const DocumentGoBackButton = () => {
   const { handleClickOnGoBack } = documentsContext;
 
   return (
-    <button onClick={handleClickOnGoBack} className="button-primary absolute left-52 top-24">
+    <button onClick={handleClickOnGoBack} className="button-primary absolute left-56 top-24">
       Go Back
     </button>
   );

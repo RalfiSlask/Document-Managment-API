@@ -7,11 +7,15 @@ const AddNewDocumentButton = () => {
   if (!documentsContext) {
     return;
   }
+
   const { handleClickOnNewDocument } = documentsContext;
 
   return (
-    <button onClick={handleClickOnNewDocument} className="button-primary w-[260px] min-h-[44px] max-h-[80px]">
-      Add New Document
+    <button
+      onClick={handleClickOnNewDocument}
+      className="button-primary w-[260px] max-h-[44px] min-w-[120px] max-w-[160px]"
+    >
+      Add New
     </button>
   );
 };
