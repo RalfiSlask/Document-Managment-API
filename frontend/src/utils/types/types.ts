@@ -22,7 +22,7 @@ export interface IDocumentObjectType {
   description: string;
   document_id: number;
   title: string;
-  user_id: number;
+  user_id: string;
 }
 
 export interface ISectionsOpenType {
