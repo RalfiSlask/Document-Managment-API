@@ -8,7 +8,7 @@ const WYSIWYGTitleInput = () => {
     return;
   }
 
-  const { currentDocument, changeCurrentDocumentOnChange, isSaveEditButtonClicked } = documentsContext;
+  const { currentDocument, changeCurrentDocumentOnChange, isEditModeEnabled } = documentsContext;
 
   if (!currentDocument) {
     return;
@@ -23,14 +23,14 @@ const WYSIWYGTitleInput = () => {
         onChange={e => {
           changeCurrentDocumentOnChange(e, 'title');
         }}
-        readOnly={isSaveEditButtonClicked ? true : false}
+        readOnly={isEditModeEnabled ? true : false}
         type="text"
         spellCheck="false"
         id="title"
         placeholder="title"
         className={`${
-          isSaveEditButtonClicked ? 'outline-none focus:none ' : 'focus:outline-[#A4FFAF] '
-        } rounded-md pl-3 py-2 bg-inputBG text-textColor placeholder:text-placeholder`}
+          isEditModeEnabled ? 'outline-none focus:none bg-[#24232C] w-[400px]' : 'focus:outline-[#A4FFAF] '
+        } rounded-md pl-3 py-2 bg-[#222f3e] text-textColor placeholder:text-placeholder w-[400px]`}
         value={currentDocument.title}
       />
     </div>

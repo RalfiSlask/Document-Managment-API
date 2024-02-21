@@ -14,7 +14,7 @@ const DeleteModal = () => {
   const { sectionsOpen, documentId } = documentsContext;
 
   return (
-    <div className="flex flex-col justify-between fixed z-20 left-1/2 -translate-x-1/2 top-60 bg-secondaryBG text-center rounded-md h-[200px] w-[400px] p-4">
+    <div className="flex flex-col justify-between fixed z-50 left-1/2 -translate-x-1/2 top-60 bg-secondaryBG text-center rounded-md h-[200px] w-[400px] p-4">
       <p className="text-lg">Are you sure you want to delete document?</p>
       <div className="w-full flex items-center justify-center gap-4">
         {sectionsOpen.wysiwyg && <WYSIWYGDeleteButton />}
