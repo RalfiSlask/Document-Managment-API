@@ -1,34 +1,79 @@
-Vi bygger ett dokumenthanteringssystem med en relationsdatabas!
+# Fullstack Document Managment System with WYSIWYG
 
-## Bakgrund
+## Tech Stacks
 
-Du har fått en kund som vill bygga ett eget system för att skapa digitala dokument och önskar att se en demo på detta.
-Kunden vill kunna logga in på sitt system, där se en lista på alla skapade dokument, kunna skapa nya och redigera de som redan finns där. När kunden tittar på ett skapat dokument så skall det finnas möjlighet att se dokumentet både “live” dvs utan redigeringsläget samt att se dokumentet i redigeringsläge.
+### Frontend
 
-## Tekniska krav
+- HTML5
+- Typescript
+- React
+- Tailwind CSS
+- Sass
 
-Det skall finnas en inloggning, men nivån på säkerhet för prototyp bestämmer du själv (dokumentera hur du har valt att göra).
-Dokument skall skapas och sparas i en MySql databas.
-Projektet skall utformas som en headless applikation, dvs med ett frontend projekt och ett API.
-För dokument skall det finnas en enkel redigering, där det går att skriva och ändra text.
-Ett dokument skall kunna visas i både redigerings och “vanligt” läge.
-Förutom dessa tekniska krav är resten utav arkitekturen upp till dig.
+### Backend
 
-## VG Krav
+- SQL
+- Express.JS
 
-Det skall gå att skapa nya användare som kan skapa sina egna dokument. Och enbart se sina skapade dokument.
-Det skall finnas en WYSIWYG editorn där det går att ändra både textfärg och bakgrundsfärg i editorn, samt att det skall gå att spara.
-Du skall även bifoga ett enklare dokument som visar hur databasen och dess relationer är konstruerat.
+### Build Tools
 
-## Inlämning
+- Vite
+- Express generator
 
-Projektet skall genomföras enligt headless principen men skapa strukturen för projektet i ett repo. Dvs i rooten kommer du ha en mapp som heter tex “frontend” och en mapp som heter “backend”. Dokumentera i readme.md hur projektet startas och är uppbyggt.
+### WYSIWYG
 
-Bifoga även en databasdump (export) med lite innehåll så att projektet går att testa.
-Samt dokumentera användarnamn och lösenord för databasen.
+- TinyMCE
 
-## Inspiration:
+## Formatting
 
-Här nedan kan du se inspiration och förklaring till hur ett digitalt dokumenthanteringssystem kan se ut!
+This projects uses code standards by applying the eslint and prettier tools:
 
-https://youtu.be/S6Cph18Za6o
+- **Eslint**: identifies bugs and patterns to make the code more consistent.
+- **Prettier**: code formatter for making the code more readable and consistent.
+
+## Status
+
+This project is marked as "In Progress"
+
+## Getting Started
+
+To run the Document Managment web application on you local machine, follow these steps:
+
+1. Download or clone the repository.
+2. Install the necessary dependencies by running `npm install`.
+3. Setup database with information provided in this readme.
+4. Start the frontend application using `npm run dev`.
+5. Start the backend using `nodemon start` or `node start`.
+
+## App Description
+
+This web application is a document managment system that lets users manage documents with an WYSIWYG editor where you can upload files, change fonts/colors for text and many other options.
+
+## Client Features
+
+- **Login form**: User can login with stored password and mail.
+- **Create account**: User can create a new account with password, email and name.
+- **Dashboard**: Shows documents for the specific user.
+- **Add new document**: User can create a new document.
+- **Edit document**: Option to edit document.
+- **Delete document**: User can soft delete documents.
+- **WYSIWYG Editor**: Write or upload content with a document editor. Several options available.
+
+## Information
+
+### Database
+
+DB_USER=RalfiSlask
+DB_PASS=mongoDB123!
+DB_HOST=localhost
+DB_PORT=3306
+DB=ralfislask
+
+### Frontend
+
+VITE_WYSIWYG_KEY=uqt14b9gr68llpdlflf56vsp03j7gh2qziau3yuo150fcy6b
+
+## Author
+
+- Frontend Mentor - [@RalfiSlask](https://www.frontendmentor.io/profile/RalfiSlask)
+- GitHub - [RalfiSlask](https://github.com/RalfiSlask)
