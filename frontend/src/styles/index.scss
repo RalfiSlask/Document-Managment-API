@@ -18,7 +18,7 @@ body,
 }
 
 .button-primary {
-  @apply bg-buttonBG rounded-md px-8 py-2 border-[2px] border-solid border-buttonBG text-lg text-buttonText hover:bg-secondaryBG hover:text-buttonBG;
+  @apply bg-buttonBG rounded-md px-4 py-1 border-[2px] border-solid border-buttonBG text-lg text-buttonText hover:bg-secondaryBG hover:text-buttonBG;
 }
 
 .input {
