@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const connection = require('../lib/conn');
+const jwt = require('jsonwebtoken');
 
 /**
  * Get all documents
@@ -30,6 +31,15 @@ router.get('/all', function (req, res, next) {
  * Get documents for specific user
  */
 router.get('/:userId', function (req, res, next) {
+  const token = req.headers.authorization.split(' ')[1];
+
+  jwt.verify(token, 'secret-key', (err, decoded) => {
+    if (err) {
+      console.log(err);
+      return res.status(401).json({ error: 'you are not authorized' });
+    }
+  });
+
   connection.connect((err) => {
     if (err) {
       console.log(err);
@@ -58,7 +68,15 @@ router.get('/:userId', function (req, res, next) {
  * Updates document with values sent in body
  */
 router.patch('/update', function (req, res, next) {
-  console.log(req.body);
+  const token = req.headers.authorization.split(' ')[1];
+
+  jwt.verify(token, 'secret-key', (err, decoded) => {
+    if (err) {
+      console.log(err);
+      return res.status(401).json({ error: 'you are not authorized' });
+    }
+  });
+
   connection.connect((err) => {
     if (err) {
       console.log(err);
@@ -101,13 +119,22 @@ router.patch('/update', function (req, res, next) {
  * Update delete status for document
  */
 router.delete('/remove', function (req, res) {
+  const token = req.headers.authorization.split(' ')[1];
+
+  jwt.verify(token, 'secret-key', (err, decoded) => {
+    if (err) {
+      console.log(err);
+      return res.status(401).json({ error: 'you are not authorized' });
+    }
+  });
+
   connection.connect((err) => {
     if (err) {
       console.log(err);
       return res.status(500).json({ error: 'error with connection' });
     }
 
-    console.log(req.body);
+    console.log('ids:', req.body);
     const { userId, documentId } = req.body;
 
     if (!userId || !documentId) {
@@ -147,6 +174,15 @@ router.delete('/remove', function (req, res) {
  * Create new document
  */
 router.post('/add/:userId', function (req, res) {
+  const token = req.headers.authorization.split(' ')[1];
+
+  jwt.verify(token, 'secret-key', (err, decoded) => {
+    if (err) {
+      console.log(err);
+      return res.status(401).json({ error: 'you are not authorized' });
+    }
+  });
+
   const { title, description, content } = req.body;
 
   console.log(req.body);
