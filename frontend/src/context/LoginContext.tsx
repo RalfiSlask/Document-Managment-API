@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useState, FormEvent } from 'react';
+import { createContext, ReactNode, useState, FormEvent, useEffect } from 'react';
 import { ILoginFormInputValues, ICreateAccountFormInputValues } from '../utils/types/types';
 import { textOnlyRegx, emailRegex } from '../utils/types/regex';
 
@@ -14,6 +14,7 @@ interface ILoginTypes {
   createAccountOpen: boolean;
   formSubmitted: boolean;
   userId: string;
+  userToken: string;
   // setters
   setIsFormValid: React.Dispatch<
     React.SetStateAction<{
@@ -48,6 +49,7 @@ interface ILoginChildrenType {
 }
 
 const storedUser = localStorage.getItem('user');
+const storedToken = localStorage.getItem('token');
 
 export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
   // form values
@@ -61,6 +63,7 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
   // user information
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState(storedUser ? JSON.parse(storedUser).id : '');
+  const [userToken, setUserToken] = useState(storedToken ? storedToken : '');
 
   // form validity
   const [isFormValid, setIsFormValid] = useState({ email: false, name: false });
@@ -97,16 +100,22 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
       const jsonData = await response.json();
       if (jsonData.id) {
         console.log(jsonData);
+        localStorage.setItem('token', jsonData.token);
         localStorage.setItem('user', JSON.stringify({ id: jsonData.id, name: jsonData.name }));
         setLoginErrorMessage('');
         setUserName(jsonData.name);
         setUserId(jsonData.id);
+        setUserToken(jsonData.token);
         navigate('/documents');
       }
     } catch (err) {
       console.log(err, 'could not post user');
     }
   };
+
+  useEffect(() => {
+    console.log('userId', userId);
+  }, [userId]);
 
   /**
    * Post form values when creating an account
@@ -142,7 +151,7 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
 
   /**
    * Resets a form
-   * @param type represents what type of input should be reset
+   * @param {string} type represents what type of input should be reset
    */
   const handleResetOfForm = (type: string) => {
     if (type === 'login') {
@@ -158,7 +167,7 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
    * Submits create account form
    * Checks if inputs are empty, in that case show error message
    * If everything is valid post input values to server
-   * @param e FormEvent for a HTML Form Element
+   * @param {FormEvent<HTMLFormElement>} e FormEvent for a HTML Form Element
    */
   const handleCreateAccountSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -265,6 +274,7 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
     loginErrorMessage: loginErrorMessage,
     createAccountErrorMessage: createAccountErrorMessage,
     formSubmitted: formSubmitted,
+    userToken: userToken,
     // setters
     setIsFormValid: setIsFormValid,
     setFormSubmitted: setFormSubmitted,
