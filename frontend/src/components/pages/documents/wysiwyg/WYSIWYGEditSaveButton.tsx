@@ -8,11 +8,11 @@ const WYSIWYGEditSaveButton = () => {
     return;
   }
 
-  const { isSaveEditButtonClicked, handleClickOnEditSaveButton, handleClickOnSaveAndUpdateDocument } = documentsContext;
+  const { isEditModeEnabled, handleClickOnEditSaveButton, handleClickOnSaveAndUpdateDocument } = documentsContext;
 
   return (
     <>
-      {isSaveEditButtonClicked ? (
+      {isEditModeEnabled ? (
         <button onClick={handleClickOnEditSaveButton} className="button-primary">
           Edit
         </button>

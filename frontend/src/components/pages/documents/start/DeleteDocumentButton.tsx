@@ -20,7 +20,7 @@ const DeleteDocumentButton: React.FC<DocumentButtonPropsType> = ({ documentId })
   return (
     <button
       onClick={() => {
-        deleteDocument(Number(userId), documentId);
+        deleteDocument(userId, documentId);
       }}
       className="button-primary"
     >

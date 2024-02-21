@@ -20,13 +20,13 @@ const NewDocumentForm = () => {
   }
 
   const { documentErrorMessage, handleNewDocumentSubmit } = documentsContext;
-  const { userId } = loginContext;
+  const { userId, userToken } = loginContext;
 
   return (
     <>
       <form
         onSubmit={e => {
-          handleNewDocumentSubmit(e, userId);
+          handleNewDocumentSubmit(e, userId, userToken);
         }}
         id="formInput"
         className="flex flex-col gap-8 w-[400px] items-center"
