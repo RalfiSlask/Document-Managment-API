@@ -3,6 +3,8 @@ var router = express.Router();
 const connection = require('../lib/conn');
 const bcrypt = require('bcrypt');
 const saltRounds = 12;
+const { v4: uuidv4 } = require('uuid');
+const jwt = require('jsonwebtoken');
 
 /**
  * Get all users
@@ -87,7 +89,7 @@ router.post('/login', (req, res) => {
       }
 
       const hashPassword = result[0].password;
-      const { name, id } = result[0];
+      const { name, uuid } = result[0];
 
       bcrypt.compare(password, hashPassword, (err, data) => {
         if (err) {
@@ -96,8 +98,12 @@ router.post('/login', (req, res) => {
         }
 
         if (data) {
+          const token = jwt.sign({ userId: uuid }, 'secret-key', {
+            expiresIn: '1h',
+          });
           console.log(data);
-          res.json({ name: name, id: id });
+
+          res.json({ name: name, id: uuid, token: token });
         } else {
           res.status(401).json({ error: 'password is incorrect' });
         }
@@ -113,6 +119,7 @@ router.post('/login', (req, res) => {
  */
 router.post('/add', (req, res) => {
   const { name, email, password } = req.body;
+  const userId = uuidv4();
   connection.connect((err) => {
     if (err) {
       console.log(err);
@@ -137,14 +144,12 @@ router.post('/add', (req, res) => {
           console.log(err);
           return res.status(500).json({ error: 'error crypting password' });
         }
-        let query = `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`;
-        connection.query(query, [name, email, hash], (err, result) => {
+        let query = `INSERT INTO users (uuid, name, email, password) VALUES (?, ?, ?, ?)`;
+        connection.query(query, [userId, name, email, hash], (err, result) => {
           if (err) {
             console.log(err);
             return res.status(500).json({ error: 'error with connection' });
           }
-
-          console.log(result);
           res
             .status(201)
             .json({ message: 'User added', name: name, email: email });
