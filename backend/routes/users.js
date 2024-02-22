@@ -101,9 +101,12 @@ router.post('/login', (req, res) => {
           const token = jwt.sign({ userId: uuid }, 'secret-key', {
             expiresIn: '1h',
           });
-          console.log(data);
-
-          res.json({ name: name, id: uuid, token: token });
+          res.cookie('token', token, {
+            httpOnly: true,
+            sameSite: 'None',
+            secure: true,
+          });
+          res.json({ name: name, id: uuid });
         } else {
           res.status(401).json({ error: 'password is incorrect' });
         }
