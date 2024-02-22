@@ -15,7 +15,6 @@ interface ILoginTypes {
   createAccountOpen: boolean;
   formSubmitted: boolean;
   userId: string;
-  userToken: string;
   // setters
   setIsFormValid: React.Dispatch<
     React.SetStateAction<{
@@ -50,7 +49,6 @@ interface ILoginChildrenType {
 }
 
 const storedUser = localStorage.getItem('user');
-const storedToken = localStorage.getItem('token');
 
 export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
   // form values
@@ -64,7 +62,6 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
   // user information
   const [userName, setUserName] = useState(storedUser ? JSON.parse(storedUser).name : '');
   const [userId, setUserId] = useState(storedUser ? JSON.parse(storedUser).id : '');
-  const [userToken, setUserToken] = useState(storedToken ? storedToken : '');
 
   // form validity
   const [isFormValid, setIsFormValid] = useState({ email: false, name: false });
@@ -89,7 +86,7 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        /*      credentials: 'include', */
+        credentials: 'include',
         body: JSON.stringify(loginInputValues),
       });
       if (!response.ok) {
@@ -98,13 +95,10 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
       }
       const jsonData = await response.json();
       if (jsonData.id) {
-        console.log(jsonData);
-        localStorage.setItem('token', jsonData.token);
         localStorage.setItem('user', JSON.stringify({ id: jsonData.id, name: jsonData.name }));
         setLoginErrorMessage('');
         setUserName(jsonData.name);
         setUserId(jsonData.id);
-        setUserToken(jsonData.token);
         navigate('/documents');
       }
     } catch (err) {
@@ -301,7 +295,6 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
     loginErrorMessage: loginErrorMessage,
     createAccountErrorMessage: createAccountErrorMessage,
     formSubmitted: formSubmitted,
-    userToken: userToken,
     // setters
     setIsFormValid: setIsFormValid,
     setFormSubmitted: setFormSubmitted,
