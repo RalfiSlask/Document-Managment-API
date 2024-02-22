@@ -63,15 +63,19 @@ This web application is a document managment system that lets users manage docum
 
 ### Database
 
-DB_USER=RalfiSlask
-DB_PASS=mongoDB123!
-DB_HOST=localhost
-DB_PORT=3306
-DB=ralfislask
+- DB_USER=RalfiSlask
+- DB_PASS=mongoDB123!
+- DB_HOST=localhost
+- DB_PORT=3306
+- DB=ralfislask
 
 ### Frontend
 
-VITE_WYSIWYG_KEY=uqt14b9gr68llpdlflf56vsp03j7gh2qziau3yuo150fcy6b
+- VITE_WYSIWYG_KEY=uqt14b9gr68llpdlflf56vsp03j7gh2qziau3yuo150fcy6b
+
+### SQL Relations
+
+![SQL-Relations](https://github.com/plugga-tech/notes-RalfiSlask/assets/112242026/44a56542-8020-4fd0-8fde-d63afb8c3a59)
 
 ## Author
 
