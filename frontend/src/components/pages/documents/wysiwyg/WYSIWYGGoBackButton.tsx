@@ -18,7 +18,7 @@ const WYSIWYGGoBackButton = () => {
       onClick={() => {
         handleClickOnAbortWYSIWYG(userId);
       }}
-      className="absolute top-24 left-30 button-primary"
+      className="absolute top-28 left-30 button-primary"
     >
       Go Back
     </button>

@@ -16,10 +16,8 @@ const WYSIWYGDeleteButton = () => {
     return;
   }
 
-  const { userToken } = loginContext;
-
   const handleClickOnDeleteAndReturnToStart = async () => {
-    deleteDocument(currentDocument.user_id, currentDocument.document_id, userToken);
+    deleteDocument(currentDocument.user_id, currentDocument.document_id);
     handleClickOnAbortWYSIWYG(currentDocument.user_id);
   };
 
