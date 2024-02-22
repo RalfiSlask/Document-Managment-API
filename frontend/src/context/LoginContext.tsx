@@ -6,6 +6,7 @@ export const LoginContext = createContext<undefined | ILoginTypes>(undefined);
 
 interface ILoginTypes {
   // states
+  passwordStrength: number;
   userName: string;
   loginInputValues: ILoginFormInputValues;
   createAccountInputValues: ICreateAccountFormInputValues;
@@ -61,22 +62,19 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
   const [createAccountErrorMessage, setCreateAccountErrorMessage] = useState('');
 
   // user information
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState(storedUser ? JSON.parse(storedUser).name : '');
   const [userId, setUserId] = useState(storedUser ? JSON.parse(storedUser).id : '');
   const [userToken, setUserToken] = useState(storedToken ? storedToken : '');
 
   // form validity
   const [isFormValid, setIsFormValid] = useState({ email: false, name: false });
 
+  // password strength
+  const [passwordStrength, setPasswordStrength] = useState(0);
+
   // booleans
   const [createAccountOpen, setCreateAccountOpen] = useState(false);
   const [formSubmitted, setFormSubmitted] = useState(false);
-
-  const loggingOut = () => {
-    localStorage.removeItem('user');
-    setUserId('');
-    setUserName('');
-  };
 
   /**
    * Posts form inputs for the user login to server
@@ -91,6 +89,7 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
         headers: {
           'Content-Type': 'application/json',
         },
+        /*      credentials: 'include', */
         body: JSON.stringify(loginInputValues),
       });
       if (!response.ok) {
@@ -112,10 +111,6 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
       console.log(err, 'could not post user');
     }
   };
-
-  useEffect(() => {
-    console.log('userId', userId);
-  }, [userId]);
 
   /**
    * Post form values when creating an account
@@ -146,20 +141,6 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
       }
     } catch (err) {
       console.log(err, 'could not post input values');
-    }
-  };
-
-  /**
-   * Resets a form
-   * @param {string} type represents what type of input should be reset
-   */
-  const handleResetOfForm = (type: string) => {
-    if (type === 'login') {
-      setLoginInputValues({ email: '', password: '' });
-      setLoginErrorMessage('');
-    } else if (type === 'create') {
-      setCreateAccountInputValues({ name: '', email: '', password: '' });
-      setCreateAccountErrorMessage('');
     }
   };
 
@@ -196,6 +177,20 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
       setLoginErrorMessage('you have to fill in inputs');
     } else {
       await postLoginUser(navigate);
+    }
+  };
+
+  /**
+   * Resets a form
+   * @param {string} type represents what type of input should be reset
+   */
+  const handleResetOfForm = (type: string) => {
+    if (type === 'login') {
+      setLoginInputValues({ email: '', password: '' });
+      setLoginErrorMessage('');
+    } else if (type === 'create') {
+      setCreateAccountInputValues({ name: '', email: '', password: '' });
+      setCreateAccountErrorMessage('');
     }
   };
 
@@ -264,10 +259,42 @@ export const LoginProvider: React.FC<ILoginChildrenType> = ({ children }) => {
     }
   };
 
+  const loggingOut = () => {
+    localStorage.removeItem('user');
+    setUserId('');
+    setUserName('');
+  };
+
+  useEffect(() => {
+    let strengthScore = 0;
+    const regExes = [
+      new RegExp('[a-z]'),
+      new RegExp('[A-Z]'),
+      new RegExp('[0-9]'),
+      new RegExp("[~`!@#$%^&*()_\\-+={[\\]}|:;',.<>?/]"),
+    ];
+
+    regExes.forEach(regex => {
+      if (regex.test(createAccountInputValues.password)) {
+        strengthScore += 1;
+      }
+    });
+
+    if (createAccountInputValues.password.length > 5) {
+      strengthScore += 1;
+    }
+    if (createAccountInputValues.password.length > 8) {
+      strengthScore += 2;
+    }
+
+    setPasswordStrength(strengthScore);
+  }, [createAccountInputValues.password]);
+
   const contextValue = {
     // states
     userName: userName,
     userId: userId,
+    passwordStrength: passwordStrength,
     createAccountOpen: createAccountOpen,
     loginInputValues: loginInputValues,
     createAccountInputValues: createAccountInputValues,
