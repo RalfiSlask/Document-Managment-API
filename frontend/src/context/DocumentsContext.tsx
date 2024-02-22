@@ -11,9 +11,10 @@ interface IDocumentsTypes {
   formSubmitted: boolean;
   documentErrorMessage: string;
   currentDocument: IDocumentObjectType | null;
-  isSaveEditButtonClicked: boolean;
+  isEditModeEnabled: boolean;
   isDeleteModalOpen: boolean;
   documentId: number;
+  initValue: string;
   // setters
   setFormSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentDocument: React.Dispatch<React.SetStateAction<IDocumentObjectType | null>>;
@@ -27,7 +28,7 @@ interface IDocumentsTypes {
     setFormSubmitted: React.Dispatch<React.SetStateAction<boolean>>
   ) => void;
   handleNewDocumentSubmit: (e: FormEvent<HTMLFormElement>, userId: string) => Promise<void>;
-  deleteDocument: (userId: number, documentId: number) => Promise<void>;
+  deleteDocument: (userId: string, documentId: number) => Promise<void>;
   handleClickOnGoBack: () => void;
   handleClickOnAbortWYSIWYG: (userId: string) => void;
   handleClickOnEditButton: (documentId: number) => void;
@@ -36,6 +37,7 @@ interface IDocumentsTypes {
   handleClickOnSaveAndUpdateDocument: () => void;
   setVisibilityOfDeleteModalOnClick: (state: boolean) => void;
   settingDocumentId: (documentId: number) => void;
+  handleChangeOnEditor: (content: string) => void;
 }
 
 interface IDocumentType {
@@ -43,8 +45,11 @@ interface IDocumentType {
 }
 
 export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
+  // states for documents
   const [documents, setDocuments] = useState<IDocumentObjectType[] | null>(null);
-  const [sectionsOpen, setSectionsOpen] = useState({ start: true, create: false, wysiwyg: false });
+  const [currentDocument, setCurrentDocument] = useState<IDocumentObjectType | null>(null);
+  const [documentId, setDocumentId] = useState(0);
+  // create new document form states
   const [newDocumentInputValues, setNewDocumentInputValues] = useState<INewDocumentFormInputValues>({
     title: '',
     description: '',
@@ -52,32 +57,117 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [documentErrorMessage, setDocumentErrorMessage] = useState('');
-  const [currentDocument, setCurrentDocument] = useState<IDocumentObjectType | null>(null);
-  const [isSaveEditButtonClicked, setIsSaveEditButtonClicked] = useState(false);
+  // booleans controling which sections/modals are open
+  const [sectionsOpen, setSectionsOpen] = useState({ start: true, create: false, wysiwyg: false });
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [documentId, setDocumentId] = useState(0);
+  // WYSIWYG Editor Content
+  const [initValue, setInitValue] = useState('');
+  const [editorContent, setEditorContent] = useState('');
+  // WYSIWTG Edit Mode
+  const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
 
-  const handleClickOnEditSaveButton = async () => {
-    setIsSaveEditButtonClicked(prevState => !prevState);
+  /**
+   * GET request to get a response with all documents for a specific user
+   * Setting document state to the documents recieved from the server
+   * @param {string} userId - ID of logged in user
+   * @returns void
+   */
+  const getUserSpecificDocuments = async (userId: string) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/documents/${userId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          /*'Authorization': `Bearer ${token}`, */
+        },
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        return;
+      }
+      const jsonData = await response.json();
+      if (jsonData) {
+        setDocuments(jsonData);
+      }
+    } catch (err) {
+      console.log(err, 'could not get documents');
+    }
   };
 
-  const setVisibilityOfDeleteModalOnClick = (state: boolean) => {
-    setIsDeleteModalOpen(state);
+  /**
+   * DELETE request to server for soft delete of document
+   * Closes the delete modal
+   * After succesful deletion, updates the user documents to current state
+   * @param {number} userId - Logged in user ID
+   * @param {number} documentId  - ID of current selected document
+   * @returns void
+   */
+  const deleteDocument = async (userId: string, documentId: number) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/documents/remove`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ userId: userId, documentId: documentId }),
+      });
+
+      const jsonData = await response.json();
+      if (jsonData) {
+        console.log(jsonData);
+        await getUserSpecificDocuments(userId);
+        setIsDeleteModalOpen(false);
+      }
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  const handleClickOnSaveAndUpdateDocument = async () => {
-    setIsSaveEditButtonClicked(prevState => !prevState);
-    await updateDocument();
+  /**
+   * POST request to server for inserting new document related to user
+   * If succesful, move user to WYSIWYG section
+   * Updated users documents with GET request to server
+   * @param {string} userId - ID of logged in user
+   * @returns void
+   */
+  const postCreateNewDocumentFormValues = async (userId: string) => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/documents/add/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(newDocumentInputValues),
+      });
+      if (!response.ok) {
+        return;
+      }
+      const jsonData = await response.json();
+      if (jsonData) {
+        console.log(jsonData);
+        setSectionsOpen(prev => ({ ...prev, create: false, wysiwyg: true }));
+        await getUserSpecificDocuments(userId);
+      }
+    } catch (err) {
+      console.log(err, 'could not post input values');
+    }
   };
 
+  /**
+   * PATCH request to server for updating a document
+   * Sends a JSON object of the current selected document to the server
+   * If succesful, object will be updated in the server
+   * @returns void
+   */
   const updateDocument = async () => {
-    console.log('currentDocument:', currentDocument);
     try {
       const response = await fetch(`http://localhost:3000/api/documents/update`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(currentDocument),
       });
       if (!response.ok) {
@@ -92,6 +182,27 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     }
   };
 
+  /**
+   * Submit function of the input values in the new document form
+   * If inputs are not filled in, responds with an error message to user
+   * If inputs are filled, reset form and WYSIWYG values
+   * awaits and sends the values from the form to the server
+   * @param {FormEvent<HTMLFormElement>} e - submit event for the form when creating a new document
+   * @param {string} userId - ID of logged in user
+   */
+  const handleNewDocumentSubmit = async (e: FormEvent<HTMLFormElement>, userId: string) => {
+    e.preventDefault();
+    const { title, description } = newDocumentInputValues;
+    if (title.trim().length <= 0 || description.trim().length <= 0) {
+      setDocumentErrorMessage('you have to fill in inputs');
+    } else {
+      handleResetOfDocumentForm();
+      setInitValue('');
+      setIsEditModeEnabled(false);
+      await postCreateNewDocumentFormValues(userId);
+    }
+  };
+
   const changeCurrentDocumentOnChange = (e: FormEvent<HTMLInputElement>, inputKey: keyof IDocumentObjectType) => {
     const target = e.target as HTMLInputElement;
     setCurrentDocument(prev => {
@@ -103,16 +214,47 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     });
   };
 
+  const handleDocumentFormInputOnChange = (
+    inputKey: keyof INewDocumentFormInputValues,
+    e: FormEvent<HTMLInputElement>,
+    setFormSubmitted: React.Dispatch<React.SetStateAction<boolean>>
+  ) => {
+    const target = e.target as HTMLInputElement;
+    setNewDocumentInputValues(prev => ({ ...prev, [inputKey]: target.value }));
+    setFormSubmitted(false);
+    setDocumentErrorMessage('');
+  };
+
   const handleClickOnEditButton = (documentId: number) => {
     if (documents !== null) {
       const shallowDocuments = [...documents];
       const currentDoc = shallowDocuments.find(document => document.document_id === documentId);
+      console.log('currentdoc', currentDoc);
       if (currentDoc) {
+        console.log('hej', currentDoc);
         setCurrentDocument(currentDoc);
         setSectionsOpen(prev => ({ ...prev, start: false, wysiwyg: true }));
-        setIsSaveEditButtonClicked(true);
+        setIsEditModeEnabled(true);
+        setInitValue(currentDoc.content);
       }
     }
+  };
+
+  const handleClickOnEditSaveButton = async () => {
+    setIsEditModeEnabled(false);
+  };
+
+  const setVisibilityOfDeleteModalOnClick = (state: boolean) => {
+    setIsDeleteModalOpen(state);
+  };
+
+  const handleClickOnSaveAndUpdateDocument = async () => {
+    setIsEditModeEnabled(true);
+    await updateDocument();
+  };
+
+  const handleChangeOnEditor = (content: string) => {
+    setEditorContent(content);
   };
 
   const settingDocumentId = (documentId: number) => {
@@ -134,93 +276,9 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     await getUserSpecificDocuments(userId);
   };
 
-  const deleteDocument = async (userId: number, documentId: number) => {
-    try {
-      const response = await fetch(`http://localhost:3000/api/documents/remove`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: userId, documentId: documentId }),
-      });
-
-      const jsonData = await response.json();
-      if (jsonData) {
-        console.log(jsonData);
-        await getUserSpecificDocuments(userId.toString());
-        setIsDeleteModalOpen(false);
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const getUserSpecificDocuments = async (userId: string) => {
-    try {
-      const response = await fetch(`http://localhost:3000/api/documents/${userId}`);
-      if (!response.ok) {
-        return;
-      }
-      const jsonData = await response.json();
-      if (jsonData) {
-        setDocuments(jsonData);
-      }
-    } catch (err) {
-      console.log(err, 'could not get documents');
-    }
-  };
-
-  const postCreateNewDocumentFormValues = async (userId: string) => {
-    try {
-      const response = await fetch(`http://localhost:3000/api/documents/add/${userId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newDocumentInputValues),
-      });
-      if (!response.ok) {
-        return;
-      }
-      const jsonData = await response.json();
-      if (jsonData) {
-        console.log(jsonData);
-        setSectionsOpen(prev => ({ ...prev, create: false, wysiwyg: true }));
-        await getUserSpecificDocuments(userId);
-      }
-    } catch (err) {
-      console.log(err, 'could not post input values');
-    }
-  };
-
-  useEffect(() => {
-    console.log('documents:', documents);
-  }, [documents]);
-
   const handleResetOfDocumentForm = () => {
     setNewDocumentInputValues({ title: '', description: '', content: '' });
   };
-
-  const handleDocumentFormInputOnChange = (
-    inputKey: keyof INewDocumentFormInputValues,
-    e: FormEvent<HTMLInputElement>,
-    setFormSubmitted: React.Dispatch<React.SetStateAction<boolean>>
-  ) => {
-    const target = e.target as HTMLInputElement;
-    setNewDocumentInputValues(prev => ({ ...prev, [inputKey]: target.value }));
-    setFormSubmitted(false);
-    setDocumentErrorMessage('');
-  };
-
-  useEffect(() => {
-    if (documents !== null) {
-      settingCurrentDocument();
-    }
-  }, [documents]);
-
-  useEffect(() => {
-    console.log('current:', currentDocument);
-  }, [currentDocument]);
 
   const settingCurrentDocument = async () => {
     if (documents !== null) {
@@ -229,17 +287,27 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     }
   };
 
-  const handleNewDocumentSubmit = async (e: FormEvent<HTMLFormElement>, userId: string) => {
-    e.preventDefault();
+  useEffect(() => {
+    setCurrentDocument(prev => {
+      if (prev) {
+        return { ...prev, content: editorContent };
+      } else {
+        return prev;
+      }
+    });
+  }, [editorContent, setCurrentDocument]);
 
-    const { title, description } = newDocumentInputValues;
-    if (title.trim().length <= 0 || description.trim().length <= 0) {
-      setDocumentErrorMessage('you have to fill in inputs');
-    } else {
-      handleResetOfDocumentForm();
-      await postCreateNewDocumentFormValues(userId);
+  useEffect(() => {
+    if (currentDocument?.content) {
+      setEditorContent(currentDocument?.content);
     }
-  };
+  }, [currentDocument]);
+
+  useEffect(() => {
+    if (documents !== null) {
+      settingCurrentDocument();
+    }
+  }, [documents]);
 
   const contextValue = {
     // states
@@ -250,8 +318,9 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     formSubmitted: formSubmitted,
     documentErrorMessage: documentErrorMessage,
     currentDocument: currentDocument,
-    isSaveEditButtonClicked: isSaveEditButtonClicked,
+    isEditModeEnabled: isEditModeEnabled,
     isDeleteModalOpen: isDeleteModalOpen,
+    initValue: initValue,
     // setters
     setFormSubmitted: setFormSubmitted,
     setCurrentDocument: setCurrentDocument,
@@ -270,6 +339,7 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     handleClickOnSaveAndUpdateDocument: handleClickOnSaveAndUpdateDocument,
     setVisibilityOfDeleteModalOnClick: setVisibilityOfDeleteModalOnClick,
     settingDocumentId: settingDocumentId,
+    handleChangeOnEditor: handleChangeOnEditor,
   };
 
   return <DocumentsContext.Provider value={contextValue}>{children}</DocumentsContext.Provider>;
