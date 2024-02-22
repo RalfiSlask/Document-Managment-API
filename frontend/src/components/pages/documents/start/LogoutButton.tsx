@@ -2,19 +2,23 @@ import { useContext } from 'react';
 import logoutIcon from '../../../../assets/icons/logout.svg';
 import { LoginContext } from '../../../../context/LoginContext';
 import { useNavigate } from 'react-router-dom';
+import { DocumentsContext } from '../../../../context/DocumentsContext';
 
 const LogoutButton = () => {
   const loginContext = useContext(LoginContext);
+  const documentsContext = useContext(DocumentsContext);
   const navigate = useNavigate();
 
-  if (!loginContext) {
+  if (!loginContext || !documentsContext) {
     return;
   }
 
-  const { loggingOut } = loginContext;
+  const { loggingOut, userId } = loginContext;
+  const { handleClickOnAbortWYSIWYG } = documentsContext;
 
   const handleClickOnLogout = () => {
     loggingOut();
+    handleClickOnAbortWYSIWYG(userId);
     navigate('/');
   };
 
