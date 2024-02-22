@@ -31,7 +31,14 @@ router.get('/all', function (req, res, next) {
  * Get documents for specific user
  */
 router.get('/:userId', function (req, res, next) {
-  const token = req.headers.authorization.split(' ')[1];
+  /*   const token = req.headers.authorization.split(' ')[1]; */
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ error: 'authorization denied' });
+  }
+
+  console.log('authorized');
 
   jwt.verify(token, 'secret-key', (err, decoded) => {
     if (err) {
@@ -46,9 +53,9 @@ router.get('/:userId', function (req, res, next) {
       return res.status(500).json({ error: 'error with connection' });
     }
 
-    let query = `SELECT * FROM documents WHERE user_id="${req.params.userId}" AND deleted="0"`;
+    let query = `SELECT * FROM documents WHERE user_id = ? AND deleted="0"`;
 
-    connection.query(query, (err, result) => {
+    connection.query(query, [req.params.userId], (err, result) => {
       if (err) {
         console.log(err);
         return res.status(500).json({ error: 'error with connection' });
@@ -68,7 +75,15 @@ router.get('/:userId', function (req, res, next) {
  * Updates document with values sent in body
  */
 router.patch('/update', function (req, res, next) {
-  const token = req.headers.authorization.split(' ')[1];
+  /*   const token = req.headers.authorization.split(' ')[1]; */
+
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ error: 'authorization denied' });
+  }
+
+  console.log('authorized');
 
   jwt.verify(token, 'secret-key', (err, decoded) => {
     if (err) {
@@ -119,7 +134,14 @@ router.patch('/update', function (req, res, next) {
  * Update delete status for document
  */
 router.delete('/remove', function (req, res) {
-  const token = req.headers.authorization.split(' ')[1];
+  /*   const token = req.headers.authorization.split(' ')[1]; */
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ error: 'authorization denied' });
+  }
+
+  console.log('authorized');
 
   jwt.verify(token, 'secret-key', (err, decoded) => {
     if (err) {
@@ -174,7 +196,14 @@ router.delete('/remove', function (req, res) {
  * Create new document
  */
 router.post('/add/:userId', function (req, res) {
-  const token = req.headers.authorization.split(' ')[1];
+  /*   const token = req.headers.authorization.split(' ')[1]; */
+  const token = req.cookies.token;
+
+  if (!token) {
+    return res.status(401).json({ error: 'authorization denied' });
+  }
+
+  console.log('authorized');
 
   jwt.verify(token, 'secret-key', (err, decoded) => {
     if (err) {
