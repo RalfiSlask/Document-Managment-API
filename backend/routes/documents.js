@@ -37,6 +37,7 @@ router.get('/:userId', function (req, res, next) {
   /*   const token = req.headers.authorization.split(' ')[1]; */
   const token = req.cookies.token;
 
+  console.log(token);
   if (!token) {
     return res.status(401).json({ error: 'authorization denied' });
   }
@@ -81,6 +82,7 @@ router.patch('/update', function (req, res, next) {
   /*   const token = req.headers.authorization.split(' ')[1]; */
 
   const token = req.cookies.token;
+  console.log(token);
 
   if (!token) {
     return res.status(401).json({ error: 'authorization denied' });
@@ -88,7 +90,7 @@ router.patch('/update', function (req, res, next) {
 
   console.log('authorized');
 
-  jwt.verify(token, 'secret-key', (err, decoded) => {
+  jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
     if (err) {
       console.log(err);
       return res.status(401).json({ error: 'you are not authorized' });
@@ -140,6 +142,7 @@ router.delete('/remove', function (req, res) {
   /*   const token = req.headers.authorization.split(' ')[1]; */
   const token = req.cookies.token;
 
+  console.log(token);
   if (!token) {
     return res.status(401).json({ error: 'authorization denied' });
   }
@@ -202,13 +205,14 @@ router.post('/add/:userId', function (req, res) {
   /*   const token = req.headers.authorization.split(' ')[1]; */
   const token = req.cookies.token;
 
+  console.log(token);
   if (!token) {
     return res.status(401).json({ error: 'authorization denied' });
   }
 
   console.log('authorized');
 
-  jwt.verify(token, 'secret-key', (err, decoded) => {
+  jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
     if (err) {
       console.log(err);
       return res.status(401).json({ error: 'you are not authorized' });
