@@ -7,6 +7,7 @@ import WYSIWYGGoBackButton from './WYSIWYGGoBackButton';
 import WYSIWYGEditSaveButton from './WYSIWYGEditSaveButton';
 import WYSIWYGOpenDeleteModalButton from './WYSIWYGOpenDeleteModalButton';
 import WYSIWYGLightbox from './WYSIWYGLightbox';
+import WYSIWYGAbortButton from './WYSIWYGAbortButton';
 
 const WYSIWYG = () => {
   const documentsContext = useContext(DocumentsContext);
@@ -16,7 +17,7 @@ const WYSIWYG = () => {
     return;
   }
 
-  const { isEditModeEnabled, initValue, handleChangeOnEditor } = documentsContext;
+  const { isEditModeEnabled, initValue, successMessage, handleChangeOnEditor } = documentsContext;
 
   return (
     <section className="flex gap-4">
@@ -48,9 +49,13 @@ const WYSIWYG = () => {
           />
         </div>
       </div>
-      <div className="bg-secondaryBG rounded-md w-[300px] h-[800px] py-6 px-6">
+      <div className="bg-secondaryBG rounded-md w-[330px] h-[703px] py-6 px-6">
+        <p className="absolute top-32 left-[500px]">{successMessage}</p>
         <div className="flex flex-col items-end gap-6">
-          <WYSIWYGEditSaveButton />
+          <div className="flex gap-2">
+            {!isEditModeEnabled && <WYSIWYGAbortButton />}
+            <WYSIWYGEditSaveButton />
+          </div>
           <WYSIWYGOpenDeleteModalButton />
         </div>
       </div>
