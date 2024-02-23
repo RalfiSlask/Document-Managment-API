@@ -1,4 +1,4 @@
- // API ENDPOINTS DOCUMENTS //
+ //  // API ENDPOINTS USERS - DONT KNOW HOW TO IMPLEMENT COOKIES HERE // //
 
 // GET ALL DOCUMENTS
 GET http://localhost:3000/api/documents/all
@@ -6,7 +6,7 @@ GET http://localhost:3000/api/documents/all
 ###
 
 // GET DOCUMENTS FOR SPECIFIC USER
-GET http://localhost:3000/api/documents/2
+GET http://localhost:3000/api/documents/6a23ab20-d1c5-4665-b1b9-ea8758060790
 
 ###
 
@@ -15,8 +15,8 @@ PATCH http://localhost:3000/api/documents/update
 Content-Type: application/json
 
 {
- "userId": 2,
- "documentId": 6,
+ "user_id": "ac19f9b6-8041-44bd-ac2d-8a87f371b4a2",
+ "document_id": 119,
  "content": "test-content",
  "title": "test-title", 
  "description": "test-description"
@@ -29,14 +29,14 @@ DELETE http://localhost:3000/api/documents/remove
 Content-Type: application/json
 
 {
- "userId": 2,
- "documentId": 6
+ "userId": "2d0b1404-9f66-4ee4-94cf-aaeacced9d4c",
+ "documentId": 115
 }
 
 ###
 
 // CREATE NEW DOCUMENT
-POST http://localhost:3000/api/documents/add/2
+POST http://localhost:3000/api/documents/add/ac19f9b6-8041-44bd-ac2d-8a87f371b4a2
 Content-Type: application/json
 
 {

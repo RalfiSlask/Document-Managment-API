@@ -1,4 +1,4 @@
- // API ENDPOINTS USERS //
+ // API ENDPOINTS USERS - DONT KNOW HOW TO IMPLEMENT COOKIES HERE //
 
 // GET ALL USERS WITHOUT PASS
 GET http://localhost:3000/api/users/all
@@ -6,17 +6,17 @@ GET http://localhost:3000/api/users/all
 ###
 
 // GET SPECIFIC USER WITHOUT PASS
-GET http://localhost:3000/api/users/2
+GET http://localhost:3000/api/users/ac19f9b6-8041-44bd-ac2d-8a87f371b4a2
 
 ###
 
 // LOGIN USER 
-POST http://localhost:3000/api/users/login 
+POST http://localhost:3000/api/users/login
 Content-Type: application/json
 
 {
- "email": "test@mail.com", 
- "password": "test"
+ "email": "kalle@mail.com", 
+ "password": "kalle"
 }
 
 ###
