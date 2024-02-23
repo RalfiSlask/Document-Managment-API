@@ -1,5 +1,15 @@
 # Fullstack Document Managment System with WYSIWYG
 
+## Login Section
+
+<img src="https://github.com/plugga-tech/notes-RalfiSlask/assets/112242026/cdaef6ab-8363-4545-bc8d-8f5821a2e0d0" width="250" height="210">
+<img src="https://github.com/plugga-tech/notes-RalfiSlask/assets/112242026/6222b8c4-e518-49d6-b013-929ba9bca2cd" width="250" height="210"> <br>
+
+## Document Managment
+
+<img src="https://github.com/plugga-tech/notes-RalfiSlask/assets/112242026/53feb196-1c4e-4ef5-a545-1772833e1da9" width="250" height="210">
+<img src="https://github.com/plugga-tech/notes-RalfiSlask/assets/112242026/374a57cb-fd92-4a3f-b71c-31b53dce7f86" width="250" height="210">
+
 ## Tech Stacks
 
 ### Frontend
