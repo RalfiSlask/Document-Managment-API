@@ -53,6 +53,7 @@ This web application is a document managment system that lets users manage docum
 
 - **Login form**: User can login with stored password and mail.
 - **Create account**: User can create a new account with password, email and name.
+- **Password Strength**: Checks the strength of the user password from weak to strong.
 - **Dashboard**: Shows documents for the specific user.
 - **Add new document**: User can create a new document.
 - **Edit document**: Option to edit document.
@@ -61,6 +62,8 @@ This web application is a document managment system that lets users manage docum
 
 ## Information
 
+- This project is only an excersice so information will be public instead of being in env. The info provided is also in server and client example.env files.
+
 ### Database
 
 - DB_USER=RalfiSlask
@@ -68,6 +71,8 @@ This web application is a document managment system that lets users manage docum
 - DB_HOST=localhost
 - DB_PORT=3306
 - DB=ralfislask
+- JWT_KEY=secret
+- CORS_ORIGIN=http://localhost:5173
 
 ### Frontend
 
