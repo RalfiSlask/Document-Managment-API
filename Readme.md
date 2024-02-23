@@ -10,7 +10,7 @@
 <img src="https://github.com/plugga-tech/notes-RalfiSlask/assets/112242026/53feb196-1c4e-4ef5-a545-1772833e1da9" width="250" height="210">
 <img src="https://github.com/plugga-tech/notes-RalfiSlask/assets/112242026/374a57cb-fd92-4a3f-b71c-31b53dce7f86" width="250" height="210">
 
-## Tech Stacks
+## Tech Stack
 
 ### Frontend
 
