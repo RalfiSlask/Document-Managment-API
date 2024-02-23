@@ -15,6 +15,7 @@ interface IDocumentsTypes {
   isDeleteModalOpen: boolean;
   documentId: number;
   initValue: string;
+  successMessage: string;
   // setters
   setFormSubmitted: React.Dispatch<React.SetStateAction<boolean>>;
   setCurrentDocument: React.Dispatch<React.SetStateAction<IDocumentObjectType | null>>;
@@ -38,6 +39,7 @@ interface IDocumentsTypes {
   setVisibilityOfDeleteModalOnClick: (state: boolean) => void;
   settingDocumentId: (documentId: number) => void;
   handleChangeOnEditor: (content: string) => void;
+  handleClickOnAbort: () => void;
 }
 
 interface IDocumentType {
@@ -56,7 +58,6 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     content: '',
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [documentErrorMessage, setDocumentErrorMessage] = useState('');
   // booleans controling which sections/modals are open
   const [sectionsOpen, setSectionsOpen] = useState({ start: true, create: false, wysiwyg: false });
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -65,6 +66,9 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
   const [editorContent, setEditorContent] = useState('');
   // WYSIWTG Edit Mode
   const [isEditModeEnabled, setIsEditModeEnabled] = useState(false);
+  // user messages
+  const [successMessage, setSuccessMessage] = useState('');
+  const [documentErrorMessage, setDocumentErrorMessage] = useState('');
 
   /**
    * GET request to get a response with all documents for a specific user
@@ -114,9 +118,9 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
 
       const jsonData = await response.json();
       if (jsonData) {
-        console.log(jsonData);
         await getUserSpecificDocuments(userId);
         setIsDeleteModalOpen(false);
+        showSuccessMessageTemp('succesfully deleted document!', 1500);
       }
     } catch (err) {
       console.log(err);
@@ -145,7 +149,6 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
       }
       const jsonData = await response.json();
       if (jsonData) {
-        console.log(jsonData);
         setSectionsOpen(prev => ({ ...prev, create: false, wysiwyg: true }));
         await getUserSpecificDocuments(userId);
       }
@@ -175,7 +178,7 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
       }
       const jsonData = await response.json();
       if (jsonData) {
-        console.log(jsonData);
+        showSuccessMessageTemp('succesfully updated document!', 1500);
       }
     } catch (err) {
       console.log(err);
@@ -229,9 +232,7 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     if (documents !== null) {
       const shallowDocuments = [...documents];
       const currentDoc = shallowDocuments.find(document => document.document_id === documentId);
-      console.log('currentdoc', currentDoc);
       if (currentDoc) {
-        console.log('hej', currentDoc);
         setCurrentDocument(currentDoc);
         setSectionsOpen(prev => ({ ...prev, start: false, wysiwyg: true }));
         setIsEditModeEnabled(true);
@@ -240,8 +241,19 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     }
   };
 
+  const showSuccessMessageTemp = (message: string, duration: number = 2000) => {
+    setSuccessMessage(message);
+    setTimeout(() => {
+      setSuccessMessage('');
+    }, duration);
+  };
+
   const handleClickOnEditSaveButton = async () => {
     setIsEditModeEnabled(false);
+  };
+
+  const handleClickOnAbort = async () => {
+    setIsEditModeEnabled(true);
   };
 
   const setVisibilityOfDeleteModalOnClick = (state: boolean) => {
@@ -266,12 +278,13 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
   };
 
   const handleClickOnGoBack = () => {
+    setSuccessMessage('');
     handleResetOfDocumentForm();
     setSectionsOpen(prev => ({ ...prev, start: true, create: false }));
   };
 
   const handleClickOnAbortWYSIWYG = async (userId: string) => {
-    setSectionsOpen(prev => ({ ...prev, start: true, wysiwyg: false }));
+    setSectionsOpen(prev => ({ ...prev, start: true, create: false, wysiwyg: false }));
     setCurrentDocument(null);
     await getUserSpecificDocuments(userId);
   };
@@ -321,6 +334,7 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     isEditModeEnabled: isEditModeEnabled,
     isDeleteModalOpen: isDeleteModalOpen,
     initValue: initValue,
+    successMessage: successMessage,
     // setters
     setFormSubmitted: setFormSubmitted,
     setCurrentDocument: setCurrentDocument,
@@ -340,6 +354,7 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     setVisibilityOfDeleteModalOnClick: setVisibilityOfDeleteModalOnClick,
     settingDocumentId: settingDocumentId,
     handleChangeOnEditor: handleChangeOnEditor,
+    handleClickOnAbort: handleClickOnAbort,
   };
 
   return <DocumentsContext.Provider value={contextValue}>{children}</DocumentsContext.Provider>;
