@@ -24,7 +24,6 @@ router.get('/all', function (req, res, next) {
         return res.status(500).json({ error: 'error with connection' });
       }
 
-      console.log('result', result);
       res.json(result);
     });
   });
@@ -37,12 +36,9 @@ router.get('/:userId', function (req, res, next) {
   /*   const token = req.headers.authorization.split(' ')[1]; */
   const token = req.cookies.token;
 
-  console.log(token);
   if (!token) {
     return res.status(401).json({ error: 'authorization denied' });
   }
-
-  console.log('authorized');
 
   jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
     if (err) {
@@ -65,7 +61,6 @@ router.get('/:userId', function (req, res, next) {
         return res.status(500).json({ error: 'error with connection' });
       }
 
-      console.log('result', result);
       res.json(result);
     });
   });
@@ -79,16 +74,11 @@ router.get('/:userId', function (req, res, next) {
  * Updates document with values sent in body
  */
 router.patch('/update', function (req, res, next) {
-  /*   const token = req.headers.authorization.split(' ')[1]; */
-
   const token = req.cookies.token;
-  console.log(token);
 
   if (!token) {
     return res.status(401).json({ error: 'authorization denied' });
   }
-
-  console.log('authorized');
 
   jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
     if (err) {
@@ -124,7 +114,6 @@ router.patch('/update', function (req, res, next) {
             return res.status(500).json({ error: 'error with connection' });
           }
 
-          console.log('result', result);
           res.json(result);
         }
       );
@@ -142,12 +131,9 @@ router.delete('/remove', function (req, res) {
   /*   const token = req.headers.authorization.split(' ')[1]; */
   const token = req.cookies.token;
 
-  console.log(token);
   if (!token) {
     return res.status(401).json({ error: 'authorization denied' });
   }
-
-  console.log('authorized');
 
   jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
     if (err) {
@@ -162,11 +148,9 @@ router.delete('/remove', function (req, res) {
       return res.status(500).json({ error: 'error with connection' });
     }
 
-    console.log('ids:', req.body);
     const { userId, documentId } = req.body;
 
     if (!userId || !documentId) {
-      console.log('you have to provide ids');
       return res.status(401).json({ error: 'you have to provide ids' });
     }
 
@@ -179,7 +163,6 @@ router.delete('/remove', function (req, res) {
       }
 
       if (data.length === 0) {
-        console.log(data);
         return res.status(404).json({ error: 'document does not exist' });
       }
 
@@ -191,7 +174,6 @@ router.delete('/remove', function (req, res) {
           return res.status(500).json({ error: 'error with connection' });
         }
 
-        console.log('result', result);
         res.json(result);
       });
     });
@@ -205,12 +187,9 @@ router.post('/add/:userId', function (req, res) {
   /*   const token = req.headers.authorization.split(' ')[1]; */
   const token = req.cookies.token;
 
-  console.log(token);
   if (!token) {
     return res.status(401).json({ error: 'authorization denied' });
   }
-
-  console.log('authorized');
 
   jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
     if (err) {
@@ -221,8 +200,6 @@ router.post('/add/:userId', function (req, res) {
 
   const { title, description, content } = req.body;
 
-  console.log(req.body);
-
   connection.connect((err) => {
     if (err) {
       console.log(err);
@@ -230,7 +207,6 @@ router.post('/add/:userId', function (req, res) {
     }
 
     if (!title || !description) {
-      console.log('provide');
       return res
         .status(404)
         .json({ error: 'you have to provide contents for the document' });
