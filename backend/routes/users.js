@@ -5,6 +5,9 @@ const bcrypt = require('bcrypt');
 const saltRounds = 12;
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 /**
  * Get all users
@@ -98,7 +101,7 @@ router.post('/login', (req, res) => {
         }
 
         if (data) {
-          const token = jwt.sign({ userId: uuid }, 'secret-key', {
+          const token = jwt.sign({ userId: uuid }, process.env.JWT_KEY, {
             expiresIn: '1h',
           });
           res.cookie('token', token, {

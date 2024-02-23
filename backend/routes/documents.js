@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 const connection = require('../lib/conn');
 const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 /**
  * Get all documents
@@ -40,7 +43,7 @@ router.get('/:userId', function (req, res, next) {
 
   console.log('authorized');
 
-  jwt.verify(token, 'secret-key', (err, decoded) => {
+  jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
     if (err) {
       console.log(err);
       return res.status(401).json({ error: 'you are not authorized' });
@@ -143,7 +146,7 @@ router.delete('/remove', function (req, res) {
 
   console.log('authorized');
 
-  jwt.verify(token, 'secret-key', (err, decoded) => {
+  jwt.verify(token, process.env.JWT_KEY, (err, decoded) => {
     if (err) {
       console.log(err);
       return res.status(401).json({ error: 'you are not authorized' });
