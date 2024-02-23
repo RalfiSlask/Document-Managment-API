@@ -50,7 +50,7 @@ router.get('/:userId', function (req, res) {
       return res.status(500).json({ error: 'error with connection' });
     }
 
-    let selectQuery = `SELECT id, email, name FROM users WHERE id="${req.params.userId}"`;
+    let selectQuery = `SELECT uuid, email, name FROM users WHERE uuid="${req.params.userId}"`;
 
     connection.query(selectQuery, (err, userData) => {
       if (err) {
