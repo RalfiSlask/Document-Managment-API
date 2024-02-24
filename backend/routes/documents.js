@@ -3,6 +3,16 @@ var router = express.Router();
 const connection = require('../lib/conn');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
+const { JSDOM } = require('jsdom');
+const createDOMPurify = require('dompurify');
+
+const window = new JSDOM('').window;
+
+const DOMPurify = createDOMPurify(window);
+
+const getSanitizedContent = (content) => {
+  return DOMPurify.sanitize(content);
+};
 
 dotenv.config();
 
@@ -73,6 +83,7 @@ router.get('/:userId', function (req, res, next) {
  * Update content
  * Checks if token is provided and verifies it is the correct one
  * Uses select query to check if the document exists in database
+ * Sanitizes the content which is of innerHTML which can be dangerous
  * Updates document with values sent in body
  */
 router.patch('/update', function (req, res, next) {
@@ -97,6 +108,8 @@ router.patch('/update', function (req, res, next) {
 
     const { user_id, document_id, content, title, description } = req.body;
 
+    const sanitizedContent = getSanitizedContent(content);
+
     let selectQuery = `SELECT * FROM documents WHERE user_id = ? AND document_id = ?`;
 
     connection.query(selectQuery, [user_id, document_id], (err, data) => {
@@ -109,7 +122,7 @@ router.patch('/update', function (req, res, next) {
 
       connection.query(
         updateQuery,
-        [content, title, description, user_id, document_id],
+        [sanitizedContent, title, description, user_id, document_id],
         (err, result) => {
           if (err) {
             console.log(err);
