@@ -75,7 +75,7 @@ This web application is a document managment system that lets users manage docum
 - Password checker for client
 - JWT tokens as http cookies
 - Auth checks on server
-- Decryption of passwords
+- Encryption of passwords
 - uuids
 - Sanitaztion of innerHTML
 
