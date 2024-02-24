@@ -70,6 +70,15 @@ This web application is a document managment system that lets users manage docum
 - **Delete document**: User can soft delete documents.
 - **WYSIWYG Editor**: Write or upload content with a document editor. Several options available.
 
+## Security
+
+- Password checker for client
+- JWT tokens as http cookies
+- Auth checks on server
+- Decryption of passwords
+- uuids
+- Sanitaztion of innerHTML
+
 ## Information
 
 - This project is only an excersice so information will be public instead of being in env. The info provided is also in server and client example.env files.
