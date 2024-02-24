@@ -31,9 +31,10 @@ router.get('/all', function (req, res, next) {
 
 /**
  * Get documents for specific user
+ * Checks if token is provided and verifies it is the correct one
+ * Returns json object with documents if they have not already been soft deleted
  */
 router.get('/:userId', function (req, res, next) {
-  /*   const token = req.headers.authorization.split(' ')[1]; */
   const token = req.cookies.token;
 
   if (!token) {
@@ -70,6 +71,7 @@ router.get('/:userId', function (req, res, next) {
 
 /**
  * Update content
+ * Checks if token is provided and verifies it is the correct one
  * Uses select query to check if the document exists in database
  * Updates document with values sent in body
  */
@@ -123,12 +125,12 @@ router.patch('/update', function (req, res, next) {
 
 /**
  * Soft delete for document
- * If delete request does not provide userId and documentId return
+ * Checks if token is provided and verifies it is the correct one
+ * Returns if delete request does not provide userId and documentId
  * Checking if document exist in database
  * Update delete status for document
  */
 router.delete('/remove', function (req, res) {
-  /*   const token = req.headers.authorization.split(' ')[1]; */
   const token = req.cookies.token;
 
   if (!token) {

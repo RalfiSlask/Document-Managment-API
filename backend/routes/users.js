@@ -10,7 +10,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 /**
- * Get all users
+ * Get all users without password
  */
 router.get('/all', function (req, res) {
   connection.connect((err) => {
@@ -33,14 +33,13 @@ router.get('/all', function (req, res) {
         return userNoPass;
       });
 
-      console.log('users', sentResults);
       res.json(sentResults);
     });
   });
 });
 
 /**
- * Get specific user
+ * Get specific user using user id in param
  */
 router.get('/:userId', function (req, res) {
   console.log(req.body);
@@ -66,8 +65,10 @@ router.get('/:userId', function (req, res) {
 
 /**
  * Login user
- * Using select query to check if user exists
- * Decrypts password and checks if it is correct, returns boolean
+ * Uses SELECT query to check if user exists
+ * Decrypts password and checks if it is correct
+ * If true sends jwt token as http cookie and json object with id and name
+ *
  */
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
