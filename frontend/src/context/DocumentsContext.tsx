@@ -1,5 +1,6 @@
 import { createContext, ReactNode, useState, FormEvent, useEffect } from 'react';
 import { IDocumentObjectType, ISectionsOpenType, INewDocumentFormInputValues } from '../utils/types/types';
+import DOMPurify from 'dompurify';
 
 export const DocumentsContext = createContext<undefined | IDocumentsTypes>(undefined);
 
@@ -206,6 +207,29 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     }
   };
 
+  /**
+   * Handles changes for the WYSIWYG editor content
+   * Sanitizes the content using DOMPurify
+   * @param {string} content - WYSIWYG editor content
+   */
+  const handleChangeOnEditor = (content: string) => {
+    const sanitizedContent = DOMPurify.sanitize(content);
+
+    setEditorContent(sanitizedContent);
+  };
+
+  /**
+   * Shows message with a timeout of provided duration
+   * @param {string} message displayed message for user
+   * @param {number} duration - duration of timeout, has a default 2000 value
+   */
+  const showSuccessMessageTemp = (message: string, duration: number = 2000) => {
+    setSuccessMessage(message);
+    setTimeout(() => {
+      setSuccessMessage('');
+    }, duration);
+  };
+
   const changeCurrentDocumentOnChange = (e: FormEvent<HTMLInputElement>, inputKey: keyof IDocumentObjectType) => {
     const target = e.target as HTMLInputElement;
     setCurrentDocument(prev => {
@@ -241,13 +265,6 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
     }
   };
 
-  const showSuccessMessageTemp = (message: string, duration: number = 2000) => {
-    setSuccessMessage(message);
-    setTimeout(() => {
-      setSuccessMessage('');
-    }, duration);
-  };
-
   const handleClickOnEditSaveButton = async () => {
     setIsEditModeEnabled(false);
   };
@@ -263,10 +280,6 @@ export const DocumentsProvider: React.FC<IDocumentType> = ({ children }) => {
   const handleClickOnSaveAndUpdateDocument = async () => {
     setIsEditModeEnabled(true);
     await updateDocument();
-  };
-
-  const handleChangeOnEditor = (content: string) => {
-    setEditorContent(content);
   };
 
   const settingDocumentId = (documentId: number) => {
