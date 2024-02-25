@@ -101,9 +101,6 @@ This web application is a document managment system that lets users manage docum
 
 ![SQL-Relations](https://github.com/RalfiSlask/Document-Managment-API/assets/112242026/95bd296c-1b1e-43e1-a183-03fdd3a6faae)
 
-
-![SQL-Relations](https://github.com/plugga-tech/notes-RalfiSlask/assets/112242026/44a56542-8020-4fd0-8fde-d63afb8c3a59)
-
 ## Author
 
 - Frontend Mentor - [@RalfiSlask](https://www.frontendmentor.io/profile/RalfiSlask)
